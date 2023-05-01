@@ -28,7 +28,6 @@ export default async () => {
   const chain = new ConversationChain({
     llm: chatBot,
     prompt,
-    verbose: true,
   });
 
   const response = await chain.predict({ text: "あなたの名前は？" });
