@@ -3,6 +3,7 @@ import * as Tools from "langchain/tools";
 import * as Agents from "langchain/agents";
 import { parse as parseYaml } from "yaml";
 import * as fs from "fs";
+import { fetchWeather } from "./Weather";
 
 export default async () => {
   const chatBot = new OpenAI({
@@ -23,4 +24,5 @@ export default async () => {
     input: "Todoを作るには？日本語で答えてください。",
   });
   console.log(response.output);
+  //await fetchWeather("東京都");
 };
