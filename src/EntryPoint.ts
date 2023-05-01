@@ -1,30 +1,36 @@
 import { OpenAI } from "langchain/llms/openai";
-import { PromptTemplate } from "langchain/prompts";
+import {
+  SystemMessagePromptTemplate,
+  HumanMessagePromptTemplate,
+  ChatPromptTemplate,
+} from "langchain/prompts";
 import { ConversationChain } from "langchain/chains";
 import { ConversationSummaryMemory } from "langchain/memory";
+import * as fs from "fs";
 
 export default async () => {
+  // ↓「魔法少女まどか☆マギカ」の「鹿目まどか」になりきらせるためのプロンプト
+  //   アニメ上での台詞をサンプルに含むので、テキストファイルはリポジトリの管理外としている
+  const madokaPrompt = fs
+    .readFileSync("./templates/secrets/Madoka.txt")
+    .toString();
+
   const chatBot = new OpenAI({
-    temperature: 0.9,
+    modelName: "gpt-3.5-turbo", // MEMO: こいつを記述したら何故か空文字問題が解決した
+    temperature: 0.2,
   });
 
-  const template = new PromptTemplate({
-    inputVariables: ["name"],
-    template: "あなたは{name}というエンジニアです。自己紹介をしてください。",
-  });
-
-  const memory = new ConversationSummaryMemory({
-    llm: chatBot,
-  });
+  const prompt = ChatPromptTemplate.fromPromptMessages([
+    SystemMessagePromptTemplate.fromTemplate(madokaPrompt),
+    HumanMessagePromptTemplate.fromTemplate("{text}"),
+  ]);
 
   const chain = new ConversationChain({
     llm: chatBot,
-    prompt: template,
-    memory,
+    prompt,
+    verbose: true,
   });
 
-  const response = await chain.call({
-    name: "TANAKA",
-  });
-  console.log(response.response + "\n\n");
+  const response = await chain.predict({ text: "あなたの名前は？" });
+  console.log(response || "No Message"); // MEMO: 何故か空文字が返ってきていた
 };
