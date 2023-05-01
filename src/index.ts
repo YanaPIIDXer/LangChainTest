@@ -1,1 +1,5 @@
-console.info("Hello");
+require("dotenv").config();
+
+// Start
+import main from "./EntryPoint";
+main();
