@@ -9,7 +9,7 @@ export const fetchWeather = async (place: string): Promise<void> => {
           q: place,
           units: "metric",
           lang: "ja",
-          appid: process.env.OPEN_WEATHER_API_KEY,
+          APPID: process.env.OPEN_WEATHER_API_KEY,
         },
       }
     );
